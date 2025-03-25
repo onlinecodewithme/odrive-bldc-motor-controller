@@ -56,10 +56,11 @@
       |       |       |                  |     |
 +-----|-------|-------|--+         +-----|-----|-----+
 |     |       |       |  |         |     |     |     |
-| Throttle Steering  VCC |         |     |     |     |
-|  Channel  Channel  GND |         |  Right Motor    |
-|                        |         |  (MY1020 BLDC)  |
-|    RC Receiver         |         |                 |
+| Pin 2      Pin 1       |      |     |     |     |
+| (CH2)      (CH1)       |      |  Right Motor    |
+| Pin 9                  |      |  (MY1020 BLDC)  |
+| (3.12V/DC) GND         |      |                 |
+| RadioLink R12F Receiver|      |                 |
 |                        |         |                 |
 +------------------------+         +-----------------+
 
@@ -88,7 +89,7 @@
    are pre-configured for UART communication at 115200 baud rate.
 
 5. RC Receiver to Arduino:
-   - RC Throttle Channel -> Arduino Pin 2
-   - RC Steering Channel -> Arduino Pin 3
-   - RC VCC -> Arduino 5V
-   - RC GND -> Arduino GND
+   - RC Receiver Pin 2 (CH2) -> Arduino Pin 2 (Throttle)
+   - RC Receiver Pin 1 (CH1) -> Arduino Pin 3 (Steering)
+   - RC Receiver Pin 9 (3.12V/DC) -> Arduino 5V
+   - RC Receiver Ground (from servo connector) -> Arduino GND

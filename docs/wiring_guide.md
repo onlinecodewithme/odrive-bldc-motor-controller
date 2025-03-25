@@ -94,11 +94,23 @@ For detailed information about locating these pins on your ODrive V3.6 controlle
 
 ### 5. RC Receiver to Arduino Connections
 
-Connect the RC receiver to the Arduino:
-- RC receiver throttle channel → Arduino pin 2
-- RC receiver steering channel → Arduino pin 3
-- RC receiver GND → Arduino GND
-- RC receiver VCC → Arduino 5V
+Connect the RadioLink R12F receiver to the Arduino:
+- RC receiver pin 2 (CH2/throttle) → Arduino pin 2
+- RC receiver pin 1 (CH1/steering) → Arduino pin 3
+- RC receiver pin 9 (3.12V/DC) → Arduino 5V
+- RC receiver ground (from servo connector) → Arduino GND
+
+The RadioLink R12F receiver has pins numbered from bottom to top on the left side:
+- Pin 1 (bottom): CH1
+- Pin 2: CH2
+- Pin 3: CH3
+- ...
+- Pin 9: 3.12V/DC (power)
+- Pin 10: RX
+- Pin 11: TX
+- Pin 12 (top): S.BUS
+
+For detailed information about connecting your specific RadioLink R12F receiver, including the exact pin numbering and alternative connection methods, please refer to the [RC Receiver Connection Guide](rc_receiver_connection.md).
 
 ## Wiring Notes
 
