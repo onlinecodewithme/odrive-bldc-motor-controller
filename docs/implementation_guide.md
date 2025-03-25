@@ -113,12 +113,22 @@ The ODrive needs to be configured for your specific motors. Connect the ODrive t
    - Go to Sketch > Include Library > Manage Libraries
    - Search for and install "SoftwareSerial" if not already installed
 
-2. Copy the ODriveArduino library files to your Arduino libraries folder:
-   - Create a folder named "ODriveArduino" in your Arduino libraries directory
-   - Copy the ODriveArduino.h and ODriveArduino.cpp files to this folder
+2. Install the ODriveArduino library:
+
+   #### Method 1: Using Arduino Library Manager (Recommended)
+   - Go to Sketch > Include Library > Manage Libraries
+   - In the Library Manager, search for "ODriveArduino"
+   - Click "Install"
+
+   #### Method 2: Manual Installation
+   - Copy the `Arduino/libraries/ODriveArduino` folder to your Arduino libraries folder:
+     - Windows: `Documents\Arduino\libraries\`
+     - Mac: `~/Documents/Arduino/libraries/`
+     - Linux: `~/Arduino/libraries/`
+   - Restart the Arduino IDE
 
 3. Upload the ODriveRCControl.ino sketch to your Arduino:
-   - Open the ODriveRCControl.ino file in Arduino IDE
+   - Open the src/ODriveRCControl/ODriveRCControl.ino file in Arduino IDE
    - Select your Arduino board type from Tools > Board
    - Select the correct port from Tools > Port
    - Click the Upload button

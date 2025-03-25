@@ -3,7 +3,7 @@
 Author: Randika Prasad  
 Website: https://cladik.com
 
-This package provides ROS 2 integration for controlling ODrive-powered tracked robots using a Jetson Orin NX board.
+This package provides ROS 2 integration for controlling ODrive-powered tracked robots using a Jetson Orin NX board. It offers a more advanced control system with ROS 2 capabilities, including odometry for navigation and joystick control.
 
 ## Features
 

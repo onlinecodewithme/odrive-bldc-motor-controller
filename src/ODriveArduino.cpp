@@ -14,7 +14,15 @@ void ODriveArduino::SetPosition(int motor_number, float position, float velocity
 }
 
 void ODriveArduino::SetPosition(int motor_number, float position, float velocity_feedforward, float current_feedforward) {
-    serial_ << "p " << motor_number << " " << position << " " << velocity_feedforward << " " << current_feedforward << "\n";
+    serial_.print("p ");
+    serial_.print(motor_number);
+    serial_.print(" ");
+    serial_.print(position);
+    serial_.print(" ");
+    serial_.print(velocity_feedforward);
+    serial_.print(" ");
+    serial_.print(current_feedforward);
+    serial_.println();
 }
 
 void ODriveArduino::SetVelocity(int motor_number, float velocity) {
@@ -22,25 +30,43 @@ void ODriveArduino::SetVelocity(int motor_number, float velocity) {
 }
 
 void ODriveArduino::SetVelocity(int motor_number, float velocity, float current_feedforward) {
-    serial_ << "v " << motor_number << " " << velocity << " " << current_feedforward << "\n";
+    serial_.print("v ");
+    serial_.print(motor_number);
+    serial_.print(" ");
+    serial_.print(velocity);
+    serial_.print(" ");
+    serial_.print(current_feedforward);
+    serial_.println();
 }
 
 void ODriveArduino::SetCurrent(int motor_number, float current) {
-    serial_ << "c " << motor_number << " " << current << "\n";
+    serial_.print("c ");
+    serial_.print(motor_number);
+    serial_.print(" ");
+    serial_.print(current);
+    serial_.println();
 }
 
 void ODriveArduino::TrapezoidalMove(int motor_number, float position) {
-    serial_ << "t " << motor_number << " " << position << "\n";
+    serial_.print("t ");
+    serial_.print(motor_number);
+    serial_.print(" ");
+    serial_.print(position);
+    serial_.println();
 }
 
 // Getters
 float ODriveArduino::GetVelocity(int motor_number) {
-    serial_ << "r axis" << motor_number << ".encoder.vel_estimate\n";
+    serial_.print("r axis");
+    serial_.print(motor_number);
+    serial_.println(".encoder.vel_estimate");
     return readFloat();
 }
 
 float ODriveArduino::GetPosition(int motor_number) {
-    serial_ << "r axis" << motor_number << ".encoder.pos_estimate\n";
+    serial_.print("r axis");
+    serial_.print(motor_number);
+    serial_.println(".encoder.pos_estimate");
     return readFloat();
 }
 
@@ -56,14 +82,20 @@ int32_t ODriveArduino::readInt() {
 // State helper
 bool ODriveArduino::run_state(int axis, int requested_state, bool wait_for_idle, float timeout) {
     int timeout_ms = (int)(timeout * 1000.0f);
-    serial_ << "w axis" << axis << ".requested_state " << requested_state << '\n';
+    serial_.print("w axis");
+    serial_.print(axis);
+    serial_.print(".requested_state ");
+    serial_.print(requested_state);
+    serial_.println();
     
     if (wait_for_idle) {
         unsigned long start_time = millis();
         int reported_state;
         do {
             delay(100);
-            serial_ << "r axis" << axis << ".current_state\n";
+            serial_.print("r axis");
+            serial_.print(axis);
+            serial_.println(".current_state");
             reported_state = readInt();
             
             if (millis() - start_time > timeout_ms) {
