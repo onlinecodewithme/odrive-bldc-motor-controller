@@ -1,5 +1,8 @@
 # ODrive Controlled Tracked Robot
 
+Author: Randika Prasad  
+Website: https://cladik.com
+
 This project implements a tracked robot control system using an ODrive controller, Arduino, and RC remote control. The system features differential steering for zero-radius turns, allowing precise control of the robot's movement.
 
 ## Project Overview
