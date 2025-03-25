@@ -1,48 +1,91 @@
+# ODrive Controlled Tracked Robot - Wiring Diagram
+# Author: Randika Prasad
+# Website: https://cladik.com
+
 +------------------+                  +------------------+
 |                  |                  |                  |
-|  RC Receiver     |                  |  Power Supply    |
-|  (R12DS)         |                  |  (48V)           |
+|   48V Power      |                  |   Left Motor     |
+|   Supply         |                  |   (MY1020 BLDC)  |
 |                  |                  |                  |
-+--------+---------+                  +--------+---------+
-         |                                     |
-         |                                     |
-         |  CH1 (Steering) -> Pin 3            |  48V+ -> DC+
-         |  CH2 (Throttle) -> Pin 2            |  48V- -> DC-
-         |  5V -> 5V                           |
-         |  GND -> GND                         |
-         |                                     |
-         v                                     v
-+--------+---------+                  +--------+---------+
-|                  |                  |                  |
-|  Arduino         |                  |  ODrive V3.6     |
-|                  |                  |  Controller      |
-|                  |                  |                  |
-+--------+---------+                  +--------+---------+
-         |                                     |
-         |  Pin 10 (TX) -> RX                  |
-         |  Pin 11 (RX) -> TX                  |
-         |  GND -> GND                         |
-         |                                     |
-         +------------------+------------------+
-                            |
-                 +----------+----------+
-                 |                     |
-                 |                     |
-        +--------v---------+  +--------v---------+
-        |                  |  |                  |
-        |  Left Motor      |  |  Right Motor     |
-        |  (MY1020)        |  |  (MY1020)        |
-        |                  |  |                  |
-        +------------------+  +------------------+
-        |                  |  |                  |
-        |  Phase A -> M0A  |  |  Phase A -> M1A  |
-        |  Phase B -> M0B  |  |  Phase B -> M1B  |
-        |  Phase C -> M0C  |  |  Phase C -> M1C  |
-        |                  |  |                  |
-        |  Hall A -> M0HA  |  |  Hall A -> M1HA  |
-        |  Hall B -> M0HB  |  |  Hall B -> M1HB  |
-        |  Hall C -> M0HC  |  |  Hall C -> M1HC  |
-        |  5V -> 5V        |  |  5V -> 5V        |
-        |  GND -> GND      |  |  GND -> GND      |
-        |                  |  |                  |
-        +------------------+  +------------------+
++-----|-------|----+                  +-----|-----|-----+
+      |       |                             |     |
+      |       |                             |     |
+      |       |                             |     |
+      |       |                             |     |
+      |       |                             |     |
+      V       V                             V     V
+    DC+     GND                           Phase  Hall
+      |       |                           A,B,C  Sensors
+      |       |                             |     |
+      |       |                             |     |
++-----|-------|-----------------------------------|-----+
+|     |       |                             |     |     |
+|    DC+     GND                           M0    M0    |
+|                                         A,B,C  ENC   |
+|                                                      |
+|                                                      |
+|                      ODrive V3.6                     |
+|                                                      |
+|                                                      |
+|                                                      |
+|  GPIO3   GPIO4    GND                  M1    M1    |
+|  (TX)    (RX)      |                  A,B,C  ENC   |
+|     |       |       |                    |     |    |
++-----|-------|-------|-------------------|-----|-----+
+      |       |       |                   |     |
+      |       |       |                   |     |
+      V       V       V                   V     V
+      |       |       |                 Phase  Hall
+      |       |       |                 A,B,C  Sensors
+      |       |       |                   |     |
+      |       |       |                   |     |
++-----|-------|-------|--+               |     |
+|     |       |       |  |               |     |
+|    RX      TX     GND  |               |     |
+|   (10)    (11)         |               |     |
+|                        |               |     |
+|      Arduino Uno       |               |     |
+|                        |               |     |
+|                        |               |     |
+|     2       3      5V  |               |     |
+|     |       |       |  |               |     |
++-----|-------|-------|--+               |     |
+      |       |       |                  |     |
+      |       |       |                  |     |
+      V       V       V                  V     V
+      |       |       |                  |     |
++-----|-------|-------|--+         +-----|-----|-----+
+|     |       |       |  |         |     |     |     |
+| Throttle Steering  VCC |         |     |     |     |
+|  Channel  Channel  GND |         |  Right Motor    |
+|                        |         |  (MY1020 BLDC)  |
+|    RC Receiver         |         |                 |
+|                        |         |                 |
++------------------------+         +-----------------+
+
+# Connection Details:
+
+1. Power:
+   - 48V Power Supply (+) -> ODrive DC+
+   - 48V Power Supply (-) -> ODrive GND
+
+2. Motors:
+   - Left Motor Phase A,B,C -> ODrive M0 A+/A-,B+/B-,C+/C-
+   - Right Motor Phase A,B,C -> ODrive M1 A+/A-,B+/B-,C+/C-
+
+3. Hall Sensors:
+   - Left Motor Hall A,B,C -> ODrive M0 ENC A,B,Z
+   - Right Motor Hall A,B,C -> ODrive M1 ENC A,B,Z
+   - Hall Sensor VCC -> ODrive 5V
+   - Hall Sensor GND -> ODrive GND
+
+4. Arduino to ODrive:
+   - Arduino Pin 10 (RX) -> ODrive GPIO3 (configured as TX)
+   - Arduino Pin 11 (TX) -> ODrive GPIO4 (configured as RX)
+   - Arduino GND -> ODrive GND
+
+5. RC Receiver to Arduino:
+   - RC Throttle Channel -> Arduino Pin 2
+   - RC Steering Channel -> Arduino Pin 3
+   - RC VCC -> Arduino 5V
+   - RC GND -> Arduino GND

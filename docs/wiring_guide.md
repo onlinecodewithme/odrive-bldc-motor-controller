@@ -1,137 +1,147 @@
 # Wiring Guide for ODrive Controlled Tracked Robot
 
-This document provides detailed instructions for wiring the tracked robot system using an ODrive controller, Arduino, RC receiver, and BLDC motors.
+Author: Randika Prasad  
+Website: https://cladik.com
+
+This guide provides detailed wiring instructions for connecting the ODrive controller, Arduino, RC receiver, and motors for the tracked robot project.
 
 ## Components
 
-- Arduino (Uno/Mega/Nano)
 - ODrive V3.6 controller
-- 2x MY1020 BLDC motors (48V, 1000W)
+- Arduino Uno/Mega/Nano
 - Jumper T12D RC transmitter and R12DS receiver
-- Power supply (48V for motors)
-- Encoders for motors (if not already integrated)
-- Miscellaneous wires, connectors, and mounting hardware
+- 2x MY1020 BLDC motors (48V, 1000W)
+- 48V power supply capable of at least 42A (2100W)
+- Hall effect sensors (if not built into motors)
+- Appropriate wiring and connectors
 
-## Wiring Diagram Overview
+## ODrive Controller Pinout
 
-```
-                                  +---------------+
-                                  |               |
-                                  |    Arduino    |
-                                  |               |
-                                  +-------+-------+
-                                          |
-          +---------------------------+   |   +---------------------------+
-          |                           |   |   |                           |
-          |                           |   |   |                           |
-+---------v----------+        +-------v---v---+        +-----------------v-+
-|                    |        |               |        |                   |
-|   RC Receiver      +------->+  ODrive V3.6  +<-------+  Power Supply    |
-|   (R12DS)          |        |  Controller   |        |  (48V)           |
-|                    |        |               |        |                   |
-+--------------------+        +-------+-------+        +-------------------+
-                                      |
-                      +---------------+----------------+
-                      |                                |
-                      |                                |
-              +-------v-------+                +-------v-------+
-              |               |                |               |
-              |  Left Motor   |                |  Right Motor  |
-              |  (MY1020)     |                |  (MY1020)     |
-              |               |                |               |
-              +---------------+                +---------------+
-```
+The ODrive V3.6 controller has the following key connection points:
 
-## Detailed Connections
+### Power Connections
+- **DC+**: Positive terminal for DC power input (48V)
+- **GND**: Ground terminal for DC power input
+- **M0 A+/A-/B+/B-/C+/C-**: Motor 0 phase connections (3 phases)
+- **M1 A+/A-/B+/B-/C+/C-**: Motor 1 phase connections (3 phases)
 
-### 1. Arduino to ODrive Controller
+### GPIO and Communication Pins
+- **GND**: Ground reference for GPIO and communication
+- **3.3V**: 3.3V output for powering external devices (limited current)
+- **5V**: 5V output for powering external devices (limited current)
+- **GPIO1-8**: General purpose I/O pins (can be configured for UART communication)
+- **SPI pins**: MISO, MOSI, SCK, CS
 
-Connect the Arduino to the ODrive using a UART serial connection:
+### Encoder Connections
+- **M0 ENC A, B, Z**: Encoder inputs for Motor 0
+- **M1 ENC A, B, Z**: Encoder inputs for Motor 1
+- **GND**: Ground reference for encoders
+- **5V**: 5V output for powering encoders
 
-| Arduino Pin | ODrive Pin | Description       |
-|-------------|------------|-------------------|
-| Pin 10 (TX) | RX         | Serial data to ODrive   |
-| Pin 11 (RX) | TX         | Serial data from ODrive |
-| GND         | GND        | Common ground     |
+## Wiring Diagram
 
-### 2. RC Receiver to Arduino
+### 1. Power Connections
 
-Connect the RC receiver channels to the Arduino:
+Connect the 48V power supply to the ODrive:
+- Power supply positive (+) → ODrive **DC+** terminal
+- Power supply negative (-) → ODrive **GND** terminal
 
-| RC Receiver Channel | Arduino Pin | Description            |
-|---------------------|-------------|------------------------|
-| Channel 2 (Throttle)| Pin 2       | Forward/backward control |
-| Channel 1 (Steering)| Pin 3       | Left/right steering    |
-| 5V                  | 5V          | Power for receiver     |
-| GND                 | GND         | Common ground          |
-
-### 3. Power Supply to ODrive
-
-Connect the power supply to the ODrive:
-
-| Power Supply | ODrive      | Description       |
-|--------------|-------------|-------------------|
-| 48V+         | DC+         | Positive terminal |
-| 48V-         | DC-         | Negative terminal |
-
-**IMPORTANT**: Ensure proper wire gauge for the high current requirements of the motors (recommend 12 AWG or thicker).
-
-### 4. Motors to ODrive
-
-Connect each BLDC motor to the ODrive:
+### 2. Motor Connections
 
 #### Left Motor (M0)
-
-| Motor Wire      | ODrive Connection | Description       |
-|-----------------|-------------------|-------------------|
-| Phase A (Blue)  | M0A               | Motor phase A     |
-| Phase B (Green) | M0B               | Motor phase B     |
-| Phase C (Yellow)| M0C               | Motor phase C     |
+- Left motor phase A → ODrive **M0 A+/A-** terminals
+- Left motor phase B → ODrive **M0 B+/B-** terminals
+- Left motor phase C → ODrive **M0 C+/C-** terminals
 
 #### Right Motor (M1)
+- Right motor phase A → ODrive **M1 A+/A-** terminals
+- Right motor phase B → ODrive **M1 B+/B-** terminals
+- Right motor phase C → ODrive **M1 C+/C-** terminals
 
-| Motor Wire      | ODrive Connection | Description       |
-|-----------------|-------------------|-------------------|
-| Phase A (Blue)  | M1A               | Motor phase A     |
-| Phase B (Green) | M1B               | Motor phase B     |
-| Phase C (Yellow)| M1C               | Motor phase C     |
+### 3. Hall Sensor Connections
 
-### 5. Hall Sensors to ODrive
+#### Left Motor Hall Sensors (M0)
+- Hall sensor A → ODrive **M0 ENC A** pin
+- Hall sensor B → ODrive **M0 ENC B** pin
+- Hall sensor C → ODrive **M0 ENC Z** pin
+- Hall sensor GND → ODrive **GND** pin
+- Hall sensor VCC → ODrive **5V** pin
 
-Connect the hall sensors from each motor to the ODrive:
+#### Right Motor Hall Sensors (M1)
+- Hall sensor A → ODrive **M1 ENC A** pin
+- Hall sensor B → ODrive **M1 ENC B** pin
+- Hall sensor C → ODrive **M1 ENC Z** pin
+- Hall sensor GND → ODrive **GND** pin
+- Hall sensor VCC → ODrive **5V** pin
 
-#### Left Motor Hall Sensors
+### 4. Arduino to ODrive Connections
 
-| Hall Sensor Wire | ODrive Connection | Description       |
-|------------------|-------------------|-------------------|
-| Hall A           | M0 Hall A         | Hall sensor A     |
-| Hall B           | M0 Hall B         | Hall sensor B     |
-| Hall C           | M0 Hall C         | Hall sensor C     |
-| 5V               | 5V                | Power for sensors |
-| GND              | GND               | Common ground     |
+Connect the Arduino to the ODrive using GPIO pins configured for UART:
+- Arduino pin 10 (RX) → ODrive **GPIO3** pin (configured as TX)
+- Arduino pin 11 (TX) → ODrive **GPIO4** pin (configured as RX)
+- Arduino GND → ODrive **GND** pin
 
-#### Right Motor Hall Sensors
+Note: The ODrive GPIO pins need to be configured for UART communication in the ODrive configuration. This is handled by the `configure_odrive.py` script.
 
-| Hall Sensor Wire | ODrive Connection | Description       |
-|------------------|-------------------|-------------------|
-| Hall A           | M1 Hall A         | Hall sensor A     |
-| Hall B           | M1 Hall B         | Hall sensor B     |
-| Hall C           | M1 Hall C         | Hall sensor C     |
-| 5V               | 5V                | Power for sensors |
-| GND              | GND               | Common ground     |
+### 5. RC Receiver to Arduino Connections
 
-## Power Considerations
+Connect the RC receiver to the Arduino:
+- RC receiver throttle channel → Arduino pin 2
+- RC receiver steering channel → Arduino pin 3
+- RC receiver GND → Arduino GND
+- RC receiver VCC → Arduino 5V
 
-1. The MY1020 motors are rated for 1000W each at 48V, which means they can draw up to ~21A each at full load.
-2. Ensure your power supply can provide at least 42A (2100W) for both motors.
-3. Use appropriate wire gauge for high-current connections:
-   - 12 AWG or thicker for motor phase wires
-   - 10 AWG or thicker for main power connections
+## Wiring Notes
 
-## Safety Precautions
+1. **Power Wiring**:
+   - Use thick gauge wire (10 AWG or thicker) for the power connections to handle the high current
+   - Keep power wires as short as possible to minimize voltage drop
+   - Consider adding a power switch and fuse for safety
 
-1. Always disconnect power before making any wiring changes.
-2. Double-check all connections before applying power.
-3. Use proper insulation and heat shrink tubing on all connections.
-4. Consider adding an emergency stop button in the main power line.
-5. Start testing with lower voltage/current limits in the ODrive configuration.
+2. **Motor Wiring**:
+   - Use thick gauge wire (12 AWG or thicker) for the motor connections
+   - Keep motor wires as short as possible to minimize EMI
+   - Twist motor phase wires together to reduce EMI
+   - If motors run in the wrong direction, swap any two of the three phase wires
+
+3. **Signal Wiring**:
+   - Keep signal wires away from power and motor wires to avoid interference
+   - Use shielded cable for encoder connections if possible
+   - Verify that the Hall sensor connections match the motor phase connections
+
+4. **Grounding**:
+   - Ensure all grounds are connected together
+   - Use a star grounding topology to avoid ground loops
+
+## Testing the Wiring
+
+After completing the wiring:
+
+1. **Power Test**:
+   - Double-check all connections before applying power
+   - Power on the system without the motors connected
+   - Verify that the ODrive and Arduino power up correctly
+
+2. **Communication Test**:
+   - Run the `check_odrive.py` script to verify ODrive communication
+   - Upload a simple test sketch to the Arduino to verify RC signal reception
+
+3. **Motor Test**:
+   - Connect one motor at a time
+   - Run the `configure_odrive.py --test` script to test basic motor control
+   - Verify that the motor spins in the correct direction
+
+## Troubleshooting
+
+- **ODrive Not Powering Up**: Check power connections and voltage
+- **Motors Not Spinning**: Check motor phase connections and encoder/Hall sensor connections
+- **Erratic Motor Behavior**: Check for loose connections and proper grounding
+- **RC Signal Issues**: Verify RC receiver connections and channel assignments
+
+## Safety Warnings
+
+- Always disconnect power before making any wiring changes
+- Use appropriate wire gauge for high-current connections
+- Ensure proper cooling for motors and the ODrive controller
+- Keep the robot on blocks during initial testing to prevent unexpected movement
+- Implement an emergency stop mechanism

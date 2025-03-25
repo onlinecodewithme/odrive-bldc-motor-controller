@@ -18,14 +18,65 @@ except ImportError:
 def find_odrive():
     """Find and connect to ODrive."""
     print("Looking for ODrive...")
+    print("Checking USB devices...")
+    
+    # Try to find any connected ODrives
     try:
-        odrv = odrive.find_any()
-        print(f"Found ODrive: {odrv.serial_number}")
-        print(f"Hardware version: {odrv.hw_version_major}.{odrv.hw_version_minor}")
-        print(f"Firmware version: {odrv.fw_version_major}.{odrv.fw_version_minor}.{odrv.fw_version_revision}")
-        return odrv
+        print("Searching for ODrive devices...")
+        devices = odrive.find_any(timeout=20)  # Increase timeout to 20 seconds
+        if devices:
+            print(f"Found ODrive: {devices.serial_number}")
+            print(f"Hardware version: {devices.hw_version_major}.{devices.hw_version_minor}")
+            print(f"Firmware version: {devices.fw_version_major}.{devices.fw_version_minor}.{devices.fw_version_revision}")
+            return devices
+        else:
+            print("No ODrive devices found within timeout period.")
     except Exception as e:
-        print(f"No ODrive found: {str(e)}")
+        print(f"Error finding ODrive: {str(e)}")
+    
+    # If we get here, no ODrive was found
+    print("\nTROUBLESHOOTING STEPS:")
+    print("1. Make sure the ODrive is connected to your computer via USB")
+    print("2. Check that the ODrive has power (DC power LED should be on)")
+    print("3. Try unplugging and reconnecting the USB cable")
+    print("4. Try a different USB port or cable")
+    print("5. Check if the ODrive is recognized by your operating system:")
+    print("   - On Linux, run 'lsusb' to see if ODrive is listed")
+    print("   - On macOS, check System Information > USB")
+    print("   - On Windows, check Device Manager")
+    
+    # Ask user if they want to continue without ODrive
+    response = input("\nNo ODrive found. Do you want to continue with simulation mode? (y/n): ")
+    if response.lower() == 'y':
+        print("Continuing in simulation mode (no actual ODrive connected)")
+        # Create a mock ODrive object for simulation
+        class MockODrive:
+            def __init__(self):
+                self.serial_number = "SIMULATION"
+                self.hw_version_major = 0
+                self.hw_version_minor = 0
+                self.fw_version_major = 0
+                self.fw_version_minor = 0
+                self.fw_version_revision = 0
+                self.config = type('obj', (object,), {
+                    'gpio3_mode': 0,
+                    'gpio4_mode': 0,
+                    'uart_a_baudrate': 0
+                })
+                self.axis0 = type('obj', (object,), {
+                    'motor': type('obj', (object,), {'config': type('obj', (object,), {'pole_pairs': 0, 'resistance_calib_max_voltage': 0, 'requested_current_range': 0, 'current_control_bandwidth': 0, 'motor_type': 0, 'current_lim': 0})}),
+                    'encoder': type('obj', (object,), {'config': type('obj', (object,), {'mode': 0, 'cpr': 0, 'calib_scan_distance': 0})}),
+                    'controller': type('obj', (object,), {'config': type('obj', (object,), {'vel_limit': 0, 'control_mode': 0, 'vel_ramp_rate': 0}), 'input_vel': 0}),
+                    'requested_state': 0
+                })
+                self.axis1 = self.axis0
+            
+            def save_configuration(self):
+                print("SIMULATION: Configuration saved")
+        
+        return MockODrive()
+    else:
+        print("Exiting script. Please connect an ODrive and try again.")
         sys.exit(1)
 
 def configure_motor(axis, motor_name, axis_num, pole_pairs=7, current_lim=20.0):
@@ -116,6 +167,34 @@ def test_motor(axis, motor_name, axis_num=None, test_velocity=0.5, test_duration
     
     print(f"{motor_name} test complete.")
 
+def configure_gpio_uart(odrv):
+    """Configure GPIO pins for UART communication with Arduino."""
+    print("Configuring GPIO pins for UART communication...")
+    
+    # Configure GPIO3 as UART TX
+    print("Setting GPIO3 as UART TX...")
+    try:
+        odrv.config.gpio3_mode = 7  # UART_A_TX
+        print("GPIO3 configured as UART TX")
+    except Exception as e:
+        print(f"Error configuring GPIO3: {str(e)}")
+    
+    # Configure GPIO4 as UART RX
+    print("Setting GPIO4 as UART RX...")
+    try:
+        odrv.config.gpio4_mode = 8  # UART_A_RX
+        print("GPIO4 configured as UART RX")
+    except Exception as e:
+        print(f"Error configuring GPIO4: {str(e)}")
+    
+    # Configure UART baud rate (115200 for Arduino communication)
+    print("Setting UART baud rate to 115200...")
+    try:
+        odrv.config.uart_a_baudrate = 115200
+        print("UART baud rate configured")
+    except Exception as e:
+        print(f"Error configuring UART baud rate: {str(e)}")
+
 def main():
     parser = argparse.ArgumentParser(description='Configure ODrive for tracked robot')
     parser.add_argument('--calibrate', action='store_true', help='Perform motor calibration')
@@ -129,6 +208,9 @@ def main():
     
     # Find ODrive
     odrv = find_odrive()
+    
+    # Configure GPIO pins for UART communication
+    configure_gpio_uart(odrv)
     
     # Configure motors
     configure_motor(odrv.axis0, "Left Motor", 0, args.pole_pairs, args.current_limit)
