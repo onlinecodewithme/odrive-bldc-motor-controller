@@ -1,0 +1,85 @@
++------------------+                  +------------------+
+|                  |                  |                  |
+|  Joystick        |                  |  Power Supply    |
+|  Controller      |                  |  (48V)           |
+|                  |                  |                  |
++--------+---------+                  +--------+---------+
+         |                                     |
+         |                                     |
+         |  USB                                |  48V+ -> DC+
+         |                                     |  48V- -> DC-
+         |                                     |
+         v                                     v
++--------+---------+                  +--------+---------+
+|                  |                  |                  |
+|  Jetson Orin NX  +----------------->+  ODrive V3.6     |
+|                  |      USB         |  Controller      |
+|                  |                  |                  |
++------------------+                  +--------+---------+
+                                               |
+                                               |
+                                +--------------+---------------+
+                                |                              |
+                                |                              |
+                       +--------v---------+         +----------v-------+
+                       |                  |         |                  |
+                       |  Left Motor      |         |  Right Motor     |
+                       |  (MY1020)        |         |  (MY1020)        |
+                       |                  |         |                  |
+                       +------------------+         +------------------+
+                       |                  |         |                  |
+                       |  Phase A -> M0A  |         |  Phase A -> M1A  |
+                       |  Phase B -> M0B  |         |  Phase B -> M1B  |
+                       |  Phase C -> M0C  |         |  Phase C -> M1C  |
+                       |                  |         |                  |
+                       |  Hall A -> M0HA  |         |  Hall A -> M1HA  |
+                       |  Hall B -> M0HB  |         |  Hall B -> M1HB  |
+                       |  Hall C -> M0HC  |         |  Hall C -> M1HC  |
+                       |  5V -> 5V        |         |  5V -> 5V        |
+                       |  GND -> GND      |         |  GND -> GND      |
+                       |                  |         |                  |
+                       +------------------+         +------------------+
+
+
+ROS 2 System Architecture:
+-------------------------
+
++------------------+
+|                  |
+|  joy_node        |
+|                  |
++--------+---------+
+         |
+         | /joy (sensor_msgs/Joy)
+         |
+         v
++--------+---------+
+|                  |
+|  teleop_node     |
+|                  |
++--------+---------+
+         |
+         | /cmd_vel (geometry_msgs/Twist)
+         |
+         v
++--------+---------+                  +------------------+
+|                  |                  |                  |
+|  odrive_node     |<---------------->|  ODrive V3.6     |
+|                  |    USB/Serial    |  Controller      |
++--------+---------+                  +------------------+
+         |
+         | /odometry (nav_msgs/Odometry)
+         | /joint_states (sensor_msgs/JointState)
+         | /left_wheel/velocity (std_msgs/Float64)
+         | /right_wheel/velocity (std_msgs/Float64)
+         | /left_wheel/position (std_msgs/Float64)
+         | /right_wheel/position (std_msgs/Float64)
+         | /connected (std_msgs/Bool)
+         |
+         v
++------------------+
+|                  |
+|  ROS 2 System    |
+|  (Visualization, |
+|   Navigation)    |
++------------------+

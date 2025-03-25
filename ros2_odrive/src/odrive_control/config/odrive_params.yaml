@@ -1,0 +1,24 @@
+/**:
+  ros__parameters:
+    use_sim_time: false
+
+odrive_node:
+  ros__parameters:
+    # Motor configuration
+    left_motor_index: 0  # M0 on ODrive
+    right_motor_index: 1  # M1 on ODrive
+    
+    # Robot physical parameters
+    wheel_radius: 0.085  # meters
+    track_width: 0.5     # meters (distance between wheels)
+    encoder_cpr: 42      # Counts per revolution
+    gear_ratio: 1.0      # Motor to wheel gear ratio
+    
+    # Control parameters
+    max_speed: 2.0       # Max speed in turns/second
+    control_mode: "velocity"  # 'velocity' or 'position'
+    publish_rate: 20.0   # Hz
+    
+    # Startup behavior
+    connect_on_startup: true
+    calibrate_on_startup: false
