@@ -1,5 +1,8 @@
 # ODrive Control for ROS 2 Humble on Jetson Orin NX
 
+Author: Randika Prasad  
+Website: https://cladik.com
+
 This package provides ROS 2 integration for controlling ODrive-powered tracked robots using a Jetson Orin NX board.
 
 ## Features
