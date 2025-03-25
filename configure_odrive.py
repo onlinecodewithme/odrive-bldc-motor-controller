@@ -167,33 +167,23 @@ def test_motor(axis, motor_name, axis_num=None, test_velocity=0.5, test_duration
     
     print(f"{motor_name} test complete.")
 
-def configure_gpio_uart(odrv):
-    """Configure GPIO pins for UART communication with Arduino."""
-    print("Configuring GPIO pins for UART communication...")
-    
-    # Configure GPIO3 as UART TX
-    print("Setting GPIO3 as UART TX...")
-    try:
-        odrv.config.gpio3_mode = 7  # UART_A_TX
-        print("GPIO3 configured as UART TX")
-    except Exception as e:
-        print(f"Error configuring GPIO3: {str(e)}")
-    
-    # Configure GPIO4 as UART RX
-    print("Setting GPIO4 as UART RX...")
-    try:
-        odrv.config.gpio4_mode = 8  # UART_A_RX
-        print("GPIO4 configured as UART RX")
-    except Exception as e:
-        print(f"Error configuring GPIO4: {str(e)}")
-    
-    # Configure UART baud rate (115200 for Arduino communication)
-    print("Setting UART baud rate to 115200...")
-    try:
-        odrv.config.uart_a_baudrate = 115200
-        print("UART baud rate configured")
-    except Exception as e:
-        print(f"Error configuring UART baud rate: {str(e)}")
+def check_uart_communication(odrv):
+    """Check UART communication for Arduino."""
+    print("\nUART Communication Setup:")
+    print("-------------------------")
+    print("Your ODrive V3.6 with firmware v0.5.1 uses GPIO1 and GPIO2 pins")
+    print("that are pre-configured for UART communication.")
+    print("\nFor Arduino communication:")
+    print("1. Connect Arduino pin 10 (RX) to ODrive GPIO1 (UART_TX)")
+    print("2. Connect Arduino pin 11 (TX) to ODrive GPIO2 (UART_RX)")
+    print("3. Connect Arduino GND to ODrive GND pin")
+    print("\nThe GPIO pins are located on the GPIO header of your ODrive board.")
+    print("For a detailed pinout diagram, see the docs/odrive_uart_pins.md file.")
+    print("\nImportant Notes:")
+    print("- The default baud rate is 115200, which matches the Arduino sketch settings")
+    print("- ODrive GPIO pins operate at 3.3V logic level")
+    print("- Arduino typically operates at 5V logic level")
+    print("- You might need a logic level converter if your Arduino uses 5V logic")
 
 def main():
     parser = argparse.ArgumentParser(description='Configure ODrive for tracked robot')
@@ -209,8 +199,8 @@ def main():
     # Find ODrive
     odrv = find_odrive()
     
-    # Configure GPIO pins for UART communication
-    configure_gpio_uart(odrv)
+    # Check UART communication setup
+    check_uart_communication(odrv)
     
     # Configure motors
     configure_motor(odrv.axis0, "Left Motor", 0, args.pole_pairs, args.current_limit)

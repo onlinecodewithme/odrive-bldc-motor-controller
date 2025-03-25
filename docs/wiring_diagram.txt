@@ -28,8 +28,8 @@
 |                                                      |
 |                                                      |
 |                                                      |
-|  GPIO3   GPIO4    GND                  M1    M1    |
-|  (TX)    (RX)      |                  A,B,C  ENC   |
+| GPIO1   GPIO2    GND                  M1    M1    |
+|(UART_TX)(UART_RX)  |                  A,B,C  ENC   |
 |     |       |       |                    |     |    |
 +-----|-------|-------|-------------------|-----|-----+
       |       |       |                   |     |
@@ -80,9 +80,12 @@
    - Hall Sensor GND -> ODrive GND
 
 4. Arduino to ODrive:
-   - Arduino Pin 10 (RX) -> ODrive GPIO3 (configured as TX)
-   - Arduino Pin 11 (TX) -> ODrive GPIO4 (configured as RX)
+   - Arduino Pin 10 (RX) -> ODrive GPIO1 (UART_TX)
+   - Arduino Pin 11 (TX) -> ODrive GPIO2 (UART_RX)
    - Arduino GND -> ODrive GND
+
+   Note: For ODrive V3.6 with firmware v0.5.1, GPIO1 and GPIO2
+   are pre-configured for UART communication at 115200 baud rate.
 
 5. RC Receiver to Arduino:
    - RC Throttle Channel -> Arduino Pin 2

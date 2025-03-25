@@ -76,12 +76,21 @@ Connect the 48V power supply to the ODrive:
 
 ### 4. Arduino to ODrive Connections
 
-Connect the Arduino to the ODrive using GPIO pins configured for UART:
-- Arduino pin 10 (RX) → ODrive **GPIO3** pin (configured as TX)
-- Arduino pin 11 (TX) → ODrive **GPIO4** pin (configured as RX)
+For ODrive V3.6 with firmware v0.5.1 (your current version), the UART pins are on the GPIO header:
+- Arduino pin 10 (RX) → ODrive **GPIO1** (functions as UART_TX)
+- Arduino pin 11 (TX) → ODrive **GPIO2** (functions as UART_RX)
 - Arduino GND → ODrive **GND** pin
 
-Note: The ODrive GPIO pins need to be configured for UART communication in the ODrive configuration. This is handled by the `configure_odrive.py` script.
+**Important Note on UART Communication:**
+Your ODrive firmware version (v0.5.1) has GPIO1 and GPIO2 pre-configured for UART communication at 115200 baud rate. These pins are part of the GPIO header on your ODrive board.
+
+For detailed information about locating these pins on your ODrive V3.6 controller, please refer to the [ODrive UART Pins Guide](odrive_uart_pins.md).
+
+**Voltage Level Consideration:**
+- ODrive GPIO pins operate at 3.3V logic level
+- Arduino typically operates at 5V logic level
+- You might need a logic level converter if your Arduino uses 5V logic
+- Some Arduino boards (like Arduino Due) operate at 3.3V and can be directly connected
 
 ### 5. RC Receiver to Arduino Connections
 
